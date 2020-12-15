@@ -11,7 +11,7 @@ class App():
         self.times = {}
         self.prevtime = {}
         self.printTime = time.time()
-        self.ser = serial.Serial('COM20', 115200, timeout=0)
+        self.ser = serial.Serial('COM3', 115200, timeout=0)
         self.count = 0
 
         self.initLabels()
@@ -25,7 +25,7 @@ class App():
         self.labels = []
         for i in range(numberOfLabels):
             self.labels.append([])
-            for j in range(7):
+            for j in range(9):
                 self.labels[i].append(tk.Label(text=""))
                 self.labels[i][j].place(relx = xPos*j, rely = labelInc*(i), anchor = 'nw')
         
@@ -36,21 +36,27 @@ class App():
         if self.ser.inWaiting()>60:
             a = self.ser.readline().decode("utf-8")
             self.count = self.count + 1
-            if self.count > -1:
-                can_id, can_data = self.parceLine(a)
-                print(can_id,can_data)
-                self.data[can_id] = can_data
-                self.times[can_id] = time.time()
-                if can_id not in self.prevtime.items():
-                    self.prevtime[can_id] = 0
+            try:
+                if self.count > 2:
+                    can_id, can_data = self.parceLine(a)
+                    print(can_id,can_data)
+                    self.data[can_id] = can_data
+                    self.times[can_id] = time.time()
+                    if can_id not in self.prevtime.items():
+                        self.prevtime[can_id] = 0
+            except:
+                pass
 
         self.data = collections.OrderedDict(sorted(self.data.items()))
         c = 0
         for i in self.data:
             temp = str(i) + str(self.data[i])
             self.labels[c][0].configure(text = str(hex(i)))
-            for j in range(6):
-                self.labels[c][j+1].configure(text = hex(self.data[i][j]))
+            c2=1
+            for j in self.data[i]:
+                print(c, j, i)
+                self.labels[c][c2].configure(text = hex(j))
+                c2=c2+1
 
             c = c + 1
 
