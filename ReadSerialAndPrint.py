@@ -45,7 +45,7 @@ times = {}
 prevtime = {}
 printTime = time.time()
 
-ser = serial.Serial('COM3', 115200, timeout=0)
+ser = serial.Serial('COM20', 115200, timeout=0)
 count = 0
 while 1:
     if ser.inWaiting()>90:
