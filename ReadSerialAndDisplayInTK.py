@@ -33,13 +33,13 @@ class App():
 
     def update(self):
         
-        if self.ser.inWaiting()>60:
+        while self.ser.inWaiting()>60:
             a = self.ser.readline().decode("utf-8")
+            print(a)
             self.count = self.count + 1
             try:
                 if self.count > 2:
                     can_id, can_data = self.parceLine(a)
-                    print(can_id,can_data)
                     self.data[can_id] = can_data
                     self.times[can_id] = time.time()
                     if can_id not in self.prevtime.items():
@@ -54,13 +54,12 @@ class App():
             self.labels[c][0].configure(text = str(hex(i)))
             c2=1
             for j in self.data[i]:
-                print(c, j, i)
                 self.labels[c][c2].configure(text = hex(j))
                 c2=c2+1
 
             c = c + 1
 
-        self.root.after(100, self.update)
+        self.root.after(50, self.update)
 
     def parceLine(self, a):
         
